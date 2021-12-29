@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  font-family: 'Noto Sans KR', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+
+  @apply overflow-x-hidden bg-neutral-100;
+}
+
+.sun-editor-editable {
+  font-family: 'Noto Sans KR', sans-serif !important;
+}
+
+.__react_component_tooltip {
+  @apply shadow bg-neutral-100;
+}
+
+.sun-editor {
+  height: 100% !important;
+}
+
+.se-container {
+  @apply flex flex-col;
+}
+
+.se-wrapper {
+  @apply flex flex-col grow;
+}
+
+.se-wrapper-inner {
+  @apply grow;
+}
