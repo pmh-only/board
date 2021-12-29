@@ -1,6 +1,8 @@
 FROM node:lts-alpine
 
-COPY . .
+COPY . /app
+
+WORKDIR /app
 
 RUN yarn
 RUN yarn build
