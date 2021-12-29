@@ -36,6 +36,18 @@ const NewPage: NextPage = () => {
     setModalOpen(true)
   }
 
+  async function addImageBlobHook (blob: Blob, callback: any) {
+    const formData = new FormData()
+    formData.append('file', blob)
+
+    const data = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    }).then((res) => res.json())
+
+    callback(data.url)
+  }
+
   return (
     <PageAnimation>
       <Container>
@@ -45,6 +57,7 @@ const NewPage: NextPage = () => {
               previewStyle="vertical"
               height="100%"
               initialEditType="markdown"
+              hooks={{ addImageBlobHook }}
               useCommandShortcut={true}
               ref={editorRef}
             />

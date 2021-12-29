@@ -40,6 +40,18 @@ const EditPage: NextPage = () => {
     })()
   }, [])
 
+  async function addImageBlobHook (blob: Blob, callback: any) {
+    const formData = new FormData()
+    formData.append('file', blob)
+
+    const data = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    }).then((res) => res.json())
+
+    callback(data.url)
+  }
+
   function onSubmit (e: FormEvent) {
     e.preventDefault()
     setContent(editorRef.current.getInstance().getMarkdown())
@@ -55,6 +67,7 @@ const EditPage: NextPage = () => {
               previewStyle="vertical"
               initialValue={content}
               height="100%"
+              hooks={{ addImageBlobHook }}
               initialEditType="markdown"
               useCommandShortcut={true}
               ref={editorRef}

@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.45.0",
     "@fontsource/noto-sans-kr": "^4.5.2",
     "@heroicons/react": "^1.0.5",
     "@toast-ui/editor": "^3.1.2",
@@ -18,8 +19,10 @@
     "@toast-ui/editor-plugin-uml": "^3.0.1",
     "@toast-ui/react-editor": "^3.1.2",
     "@types/cookie": "^0.4.1",
+    "@types/formidable": "^2.0.1",
     "@types/react-modal": "^3.13.1",
     "@types/sha.js": "^2.4.0",
+    "@types/uuid": "^8.3.3",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "cookie": "^0.4.1",
     "crypto-random-string": "^4.0.0",
@@ -28,12 +31,14 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.28.0",
+    "formidable": "^2.0.1",
     "framer-motion": "^5.5.5",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.15",
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
     "next": "12.0.7",
+    "next-connect": "^0.11.0",
     "nextjs-progressbar": "^0.0.13",
     "prismjs": "^1.25.0",
     "react": "17.0.2",
@@ -43,6 +48,7 @@
     "react-tooltip": "^4.2.21",
     "sha.js": "^2.4.11",
     "swr": "^1.1.2",
+    "uuid": "^8.3.2",
     "xss": "^1.0.10"
   },
   "devDependencies": {
