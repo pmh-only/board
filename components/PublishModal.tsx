@@ -21,6 +21,8 @@ const PublishModal: NextPage<Props> = ({ isOpen, onRequestClose, content, id }) 
 
   useEffect(() => {
     (async () => {
+      if (!id) return
+
       const data = await fetch(`/api/board/${new URL(window.location.href).searchParams.get('id')}`)
         .then((res) => res.json())
 

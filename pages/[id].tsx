@@ -1,4 +1,4 @@
-import { EyeIcon, PencilAltIcon, RefreshIcon, XCircleIcon } from '@heroicons/react/outline'
+import { EyeIcon, PencilAltIcon, RefreshIcon, TrashIcon, XCircleIcon } from '@heroicons/react/outline'
 import moment from 'moment'
 import type { NextPage } from 'next'
 import Head from 'next/head'
@@ -80,11 +80,18 @@ const Logout: NextPage = () => {
                     <p className="py-1 text-xs text-neutral-500">{moment(data.board.created_at).format('YYYY년 MM월 DD일')}</p>
                     <p className="flex items-end gap-1 py-1 text-xs text-neutral-500"><EyeIcon className="w-3 h-3"/> {data.board.views}</p>
                   </div>
-                  <div>
+                  <div className="flex gap-1 text-neutral-500">
                     {editBtnVisiable &&
                       <Link passHref href={`/edit?id=${router.query.id}`}>
                         <div className="hover:bg-neutral-200 transition-all p-1 rounded cursor-pointer">
                           <PencilAltIcon className="w-5 h-5"/>
+                        </div>
+                      </Link>}
+
+                    {editBtnVisiable &&
+                      <Link passHref href={`/delete?id=${router.query.id}`}>
+                        <div className="hover:bg-neutral-200 transition-all p-1 rounded cursor-pointer">
+                          <TrashIcon className="w-5 h-5"/>
                         </div>
                       </Link>}
                   </div>

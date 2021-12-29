@@ -37,4 +37,23 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
     return res.send({ success: true, id })
   }
+
+  if (req.method === 'DELETE') {
+    const { token } = req.cookies
+    const id = req.query.id as string
+
+    if (!token || !id) {
+      return res.send({ success: false })
+    }
+
+    if (!tokenVerify(token)) {
+      return res.send({ success: false })
+    }
+
+    const db = createDBConnection()
+
+    await db('board').where('id', id).del()
+
+    return res.send({ success: true })
+  }
 }
