@@ -1,4 +1,3 @@
-
 import Prism from 'prismjs'
 
 import uml from '@toast-ui/editor-plugin-uml'

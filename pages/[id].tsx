@@ -1,4 +1,4 @@
-import { EyeIcon, RefreshIcon, XCircleIcon } from '@heroicons/react/outline'
+import { EyeIcon, PencilAltIcon, RefreshIcon, XCircleIcon } from '@heroicons/react/outline'
 import moment from 'moment'
 import type { NextPage } from 'next'
 import Head from 'next/head'
@@ -15,6 +15,9 @@ import '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin
 import Container from '../components/Container'
 import PageAnimation from '../components/PageAnimation'
 import dynamic from 'next/dynamic'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { parse } from 'cookie'
 
 const Viewer = dynamic(() => import('../components/Viewer'), { ssr: false })
 
@@ -22,11 +25,27 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 const Logout: NextPage = () => {
   const router = useRouter()
+  const [editBtnVisiable, setEditBtnVisiable] = useState(false)
   const { data, error } = useSWR(`/api/board/${router.query.id}`, fetcher, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false
   })
+
+  useEffect(() => {
+    (async () => {
+      const cookies = parse(document.cookie)
+
+      if (!cookies.token) return setEditBtnVisiable(false)
+
+      const res = await fetch('/api/auth/check')
+        .then((res) => res.json())
+
+      if (!res.success) return setEditBtnVisiable(false)
+
+      setEditBtnVisiable(true)
+    })()
+  }, [])
 
   return (
     <PageAnimation>
@@ -55,11 +74,19 @@ const Logout: NextPage = () => {
 
             {data && data.success && (
               <div>
-                <div className="sticky top-10">
-                  <div className="flex items-end gap-3 px-5 py-2 bg-neutral-100 border-b">
+                <div className="sticky top-10 flex justify-between items-center px-5 py-2 bg-neutral-100 border-b">
+                  <div className="flex items-end gap-3">
                     <h1 className="text-xl font-bold">{data.board.title}</h1>
                     <p className="py-1 text-xs text-neutral-500">{moment(data.board.created_at).format('YYYY년 MM월 DD일')}</p>
                     <p className="flex items-end gap-1 py-1 text-xs text-neutral-500"><EyeIcon className="w-3 h-3"/> {data.board.views}</p>
+                  </div>
+                  <div>
+                    {editBtnVisiable &&
+                      <Link passHref href={`/edit?id=${router.query.id}`}>
+                        <div className="hover:bg-neutral-200 transition-all p-1 rounded cursor-pointer">
+                          <PencilAltIcon className="w-5 h-5"/>
+                        </div>
+                      </Link>}
                   </div>
                 </div>
 
