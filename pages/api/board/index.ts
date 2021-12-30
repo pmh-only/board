@@ -6,5 +6,11 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
   const boards =
     await db.select('*', 'content AS raw_content', db.raw('SUBSTRING(content,1,50) AS content')).from('board')
 
-  return res.send({ boards: boards.map((row) => ({ ...row, raw_content: undefined, image: /<img[^>]+src="?([^"\s]+)"?[^>]*>/g.exec(row.raw_content)?.[1] })) })
+  return res.send({
+    boards: boards.map((row) => ({
+      ...row,
+      raw_content: undefined,
+      image: /!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/g.exec(row.raw_content)?.[1]
+    }))
+  })
 }
