@@ -4,7 +4,7 @@ import nextConnect from 'next-connect'
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import multipartFormParser from '../../middlewares/multipart-form-parser'
 
-import uuid from 'uuid'
+import { v4 as uuid } from 'uuid'
 import { readFileSync } from 'fs'
 
 const handler = nextConnect()
@@ -30,7 +30,7 @@ handler.post(async (req: NextApiRequest & { files: any }, res: NextApiResponse) 
     return res.send({ success: false })
   }
 
-  const key = `uploads/${uuid.v4()}-${req.files.file.originalFilename}`
+  const key = `uploads/${uuid()}-${req.files.file.originalFilename}`
 
   const uploadRequest = new PutObjectCommand({
     Bucket: process.env.AWS_S3_BUCKET,

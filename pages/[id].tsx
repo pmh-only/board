@@ -18,6 +18,7 @@ import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { parse } from 'cookie'
+import ReactTooltip from 'react-tooltip'
 
 const Viewer = dynamic(() => import('../components/Viewer'), { ssr: false })
 
@@ -36,14 +37,23 @@ const Logout: NextPage = () => {
     (async () => {
       const cookies = parse(document.cookie)
 
-      if (!cookies.token) return setEditBtnVisiable(false)
+      if (!cookies.token) {
+        setEditBtnVisiable(false)
+        ReactTooltip.rebuild()
+        return
+      }
 
       const res = await fetch('/api/auth/check')
         .then((res) => res.json())
 
-      if (!res.success) return setEditBtnVisiable(false)
+      if (!res.success) {
+        setEditBtnVisiable(false)
+        ReactTooltip.rebuild()
+        return
+      }
 
       setEditBtnVisiable(true)
+      ReactTooltip.rebuild()
     })()
   }, [])
 
@@ -83,14 +93,14 @@ const Logout: NextPage = () => {
                   <div className="flex gap-1 text-neutral-500">
                     {editBtnVisiable &&
                       <Link passHref href={`/edit?id=${router.query.id}`}>
-                        <div className="hover:bg-neutral-200 transition-all p-1 rounded cursor-pointer">
+                        <div data-tip="수정" className="hover:bg-neutral-200 transition-all p-1 rounded cursor-pointer">
                           <PencilAltIcon className="w-5 h-5"/>
                         </div>
                       </Link>}
 
                     {editBtnVisiable &&
                       <Link passHref href={`/delete?id=${router.query.id}`}>
-                        <div className="hover:bg-neutral-200 transition-all p-1 rounded cursor-pointer">
+                        <div data-tip="삭제" className="hover:bg-neutral-200 transition-all p-1 rounded cursor-pointer">
                           <TrashIcon className="w-5 h-5"/>
                         </div>
                       </Link>}
