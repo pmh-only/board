@@ -7,7 +7,7 @@ WORKDIR /app
 RUN yarn
 RUN yarn build
 
-ENV DB_HOST host.docker.internal
+ENV DB_HOST 172.17.0.1
 
 EXPOSE 8080
 

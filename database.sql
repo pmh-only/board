@@ -1,4 +1,4 @@
-create user board@host.docker.internal;
+create user board@172.17.0.1;
 
 create schema board;
 
@@ -11,4 +11,4 @@ create table board.board (
   views int default 0
 );
 
-grant all on board.* to board@host.docker.internal;
+grant all on board.* to board@172.17.0.1;
