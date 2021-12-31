@@ -61,6 +61,17 @@ const Logout: NextPage = () => {
     <PageAnimation>
       <Head>
         <title>{data && data.success ? data.board.title : 'board view'} - {process.env.NEXT_PUBLIC_SITE_NAME}</title>
+        <meta name="og:site_name" content={process.env.NEXT_PUBLIC_SITE_NAME}/>
+        <meta name="theme-color" content="#CBCBCB"/>
+        <meta name="twitter:card" content="summary_large_image"/>
+
+        {data && data.success && (
+          <>
+            <meta property="og:title" content={data.board.title}/>
+            <meta property="og:description" content={data.board.content}/>
+            <meta property="og:image" content={data.board.image || `https://picsum.photos/200?blur#${data.board.id}`}/>
+          </>
+        )}
       </Head>
 
       <Container className="max-w-4xl">
@@ -68,23 +79,23 @@ const Logout: NextPage = () => {
           <div className="bg-white rounded shadow grow">
 
             {!data && !error &&
-              <div className="flex justify-center gap-1 text-sm text-neutral-500 items-center h-full">
+              <div className="flex items-center justify-center h-full gap-1 text-sm text-neutral-500">
                 <RefreshIcon className="w-5 h-5 animate-spin"/> 로딩중...
               </div>}
 
             {error &&
-              <div className="flex justify-center gap-1 text-sm text-red-400 items-center h-full">
+              <div className="flex items-center justify-center h-full gap-1 text-sm text-red-400">
                 <XCircleIcon className="w-5 h-5"/> 오류가 발생하였습니다.
               </div>}
 
             {data && !data.success &&
-              <div className="flex justify-center gap-1 text-sm text-neutral-500 items-center h-full">
+              <div className="flex items-center justify-center h-full gap-1 text-sm text-neutral-500">
                 <XCircleIcon className="w-5 h-5"/> 없는 페이지입니다.
               </div>}
 
             {data && data.success && (
               <div>
-                <div className="sticky top-10 flex justify-between items-center px-5 py-2 bg-neutral-100 border-b">
+                <div className="sticky flex items-center justify-between px-5 py-2 border-b top-10 bg-neutral-100">
                   <div className="flex items-end gap-3">
                     <h1 className="text-xl font-bold">{data.board.title}</h1>
                     <p className="py-1 text-xs text-neutral-500">{moment(data.board.created_at).format('YYYY년 MM월 DD일')}</p>
@@ -93,14 +104,14 @@ const Logout: NextPage = () => {
                   <div className="flex gap-1 text-neutral-500">
                     {editBtnVisiable &&
                       <Link passHref href={`/edit?id=${router.query.id}`}>
-                        <div data-tip="수정" className="hover:bg-neutral-200 transition-all p-1 rounded cursor-pointer">
+                        <div data-tip="수정" className="p-1 transition-all rounded cursor-pointer hover:bg-neutral-200">
                           <PencilAltIcon className="w-5 h-5"/>
                         </div>
                       </Link>}
 
                     {editBtnVisiable &&
                       <Link passHref href={`/delete?id=${router.query.id}`}>
-                        <div data-tip="삭제" className="hover:bg-neutral-200 transition-all p-1 rounded cursor-pointer">
+                        <div data-tip="삭제" className="p-1 transition-all rounded cursor-pointer hover:bg-neutral-200">
                           <TrashIcon className="w-5 h-5"/>
                         </div>
                       </Link>}
