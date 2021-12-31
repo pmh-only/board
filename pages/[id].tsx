@@ -67,7 +67,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
         {board && (
           <>
             <meta property="og:title" content={board.title}/>
-            <meta property="og:description" content={board.content}/>
+            <meta property="og:description" content={board.content.substring(0, 100)}/>
             <meta property="og:image" content={image.current || `https://picsum.photos/200?blur#${board.id}`}/>
           </>
         )}
