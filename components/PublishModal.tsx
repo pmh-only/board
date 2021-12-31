@@ -66,7 +66,7 @@ const PublishModal: NextPage<Props> = ({ isOpen, onRequestClose, content, id }) 
       return
     }
 
-    toast.success('저장되었습니다.')
+    toast.success('저장되었습니다. 업로드까지 최대 10초 정도 걸릴 수 있습니다.')
     router.push(`/${data.id}`)
   }
 
