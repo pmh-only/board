@@ -83,7 +83,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
 
             {board && (
               <div>
-                <div className="sticky flex items-center justify-between px-5 py-2 border-b top-10 bg-neutral-100">
+                <div className="sticky z-40 flex items-center justify-between px-5 py-2 border-b top-10 bg-neutral-100">
                   <div className="flex items-end gap-3">
                     <h1 className="text-xl font-bold">{board.title}</h1>
                     <p className="py-1 text-xs text-neutral-500">{moment(board.created_at).format('YYYY년 MM월 DD일')}</p>
