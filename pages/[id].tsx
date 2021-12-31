@@ -31,7 +31,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
   const image = useRef(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/g.exec(board.content)?.[1])
 
   useEffect(() => {
-    fetch(`/api/board/view?id=${board.id}`)
+    fetch(`/api/view?id=${board.id}`)
 
     ;(async () => {
       const cookies = parse(document.cookie)
