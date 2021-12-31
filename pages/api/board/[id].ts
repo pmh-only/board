@@ -8,9 +8,8 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     const db = createDBConnection()
 
     await db.increment('views').from('board').where('id', id)
-    const [board] = await db.select('*').from('board').where('id', id)
 
-    return res.send({ success: !!board, board })
+    return res.send('ok')
   }
 
   if (req.method === 'POST') {

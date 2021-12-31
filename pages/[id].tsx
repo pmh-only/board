@@ -1,9 +1,7 @@
-import { EyeIcon, PencilAltIcon, RefreshIcon, TrashIcon, XCircleIcon } from '@heroicons/react/outline'
 import moment from 'moment'
-import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import useSWR from 'swr'
+import type { GetStaticPaths, GetStaticProps, NextPage } from 'next'
+import { EyeIcon, PencilAltIcon, TrashIcon, XCircleIcon } from '@heroicons/react/outline'
 
 import 'prismjs/themes/prism-tomorrow.css'
 import '@toast-ui/chart/dist/toastui-chart.css'
@@ -15,26 +13,27 @@ import '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin
 import Container from '../components/Container'
 import PageAnimation from '../components/PageAnimation'
 import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { parse } from 'cookie'
 import ReactTooltip from 'react-tooltip'
+import { createDBConnection } from '../utils/db'
+import { Board } from 'knex/types/tables'
 
 const Viewer = dynamic(() => import('../components/Viewer'), { ssr: false })
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
+interface Props {
+  board: Board
+}
 
-const Logout: NextPage = () => {
-  const router = useRouter()
+const BoardView: NextPage<Props> = ({ board }) => {
   const [editBtnVisiable, setEditBtnVisiable] = useState(false)
-  const { data, error } = useSWR(`/api/board/${router.query.id}`, fetcher, {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  })
+  const image = useRef(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/g.exec(board.content)?.[1])
 
   useEffect(() => {
-    (async () => {
+    fetch(`/api/board/${board.id}`)
+
+    ;(async () => {
       const cookies = parse(document.cookie)
 
       if (!cookies.token) {
@@ -60,16 +59,16 @@ const Logout: NextPage = () => {
   return (
     <PageAnimation>
       <Head>
-        <title>{data && data.success ? data.board.title : 'board view'} - {process.env.NEXT_PUBLIC_SITE_NAME}</title>
+        <title>{board ? board.title : 'board view'} - {process.env.NEXT_PUBLIC_SITE_NAME}</title>
         <meta name="og:site_name" content={process.env.NEXT_PUBLIC_SITE_NAME}/>
         <meta name="theme-color" content="#CBCBCB"/>
         <meta name="twitter:card" content="summary_large_image"/>
 
-        {data && data.success && (
+        {board && (
           <>
-            <meta property="og:title" content={data.board.title}/>
-            <meta property="og:description" content={data.board.content}/>
-            <meta property="og:image" content={data.board.image || `https://picsum.photos/200?blur#${data.board.id}`}/>
+            <meta property="og:title" content={board.title}/>
+            <meta property="og:description" content={board.content}/>
+            <meta property="og:image" content={image.current || `https://picsum.photos/200?blur#${board.id}`}/>
           </>
         )}
       </Head>
@@ -77,40 +76,29 @@ const Logout: NextPage = () => {
       <Container className="max-w-4xl">
         <div className="flex min-h-full py-5">
           <div className="bg-white rounded shadow grow">
-
-            {!data && !error &&
-              <div className="flex items-center justify-center h-full gap-1 text-sm text-neutral-500">
-                <RefreshIcon className="w-5 h-5 animate-spin"/> 로딩중...
-              </div>}
-
-            {error &&
-              <div className="flex items-center justify-center h-full gap-1 text-sm text-red-400">
-                <XCircleIcon className="w-5 h-5"/> 오류가 발생하였습니다.
-              </div>}
-
-            {data && !data.success &&
+            {!board &&
               <div className="flex items-center justify-center h-full gap-1 text-sm text-neutral-500">
                 <XCircleIcon className="w-5 h-5"/> 없는 페이지입니다.
               </div>}
 
-            {data && data.success && (
+            {board && (
               <div>
                 <div className="sticky flex items-center justify-between px-5 py-2 border-b top-10 bg-neutral-100">
                   <div className="flex items-end gap-3">
-                    <h1 className="text-xl font-bold">{data.board.title}</h1>
-                    <p className="py-1 text-xs text-neutral-500">{moment(data.board.created_at).format('YYYY년 MM월 DD일')}</p>
-                    <p className="flex items-end gap-1 py-1 text-xs text-neutral-500"><EyeIcon className="w-3 h-3"/> {data.board.views}</p>
+                    <h1 className="text-xl font-bold">{board.title}</h1>
+                    <p className="py-1 text-xs text-neutral-500">{moment(board.created_at).format('YYYY년 MM월 DD일')}</p>
+                    <p className="flex items-end gap-1 py-1 text-xs text-neutral-500"><EyeIcon className="w-3 h-3"/> {board.views}</p>
                   </div>
                   <div className="flex gap-1 text-neutral-500">
                     {editBtnVisiable &&
-                      <Link passHref href={`/edit?id=${router.query.id}`}>
+                      <Link passHref href={`/edit?id=${board.id}`}>
                         <div data-tip="수정" className="p-1 transition-all rounded cursor-pointer hover:bg-neutral-200">
                           <PencilAltIcon className="w-5 h-5"/>
                         </div>
                       </Link>}
 
                     {editBtnVisiable &&
-                      <Link passHref href={`/delete?id=${router.query.id}`}>
+                      <Link passHref href={`/delete?id=${board.id}`}>
                         <div data-tip="삭제" className="p-1 transition-all rounded cursor-pointer hover:bg-neutral-200">
                           <TrashIcon className="w-5 h-5"/>
                         </div>
@@ -119,7 +107,7 @@ const Logout: NextPage = () => {
                 </div>
 
                 <div className="px-3">
-                  <Viewer content={data.board.content}/>
+                  <Viewer content={board.content}/>
                 </div>
               </div>
             )}
@@ -130,4 +118,28 @@ const Logout: NextPage = () => {
   )
 }
 
-export default Logout
+export const getStaticProps: GetStaticProps = async (context) => {
+  const id = context.params?.id as string
+  const db = createDBConnection()
+
+  const [board] = await db.select('*').from('board').where('id', id)
+
+  return {
+    props: { board: JSON.parse(JSON.stringify(board)) },
+    revalidate: 10 // In seconds
+  }
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const db = createDBConnection()
+  const boards = await db.select('id').from('board')
+
+  // Get the paths we want to pre-render based on posts
+  const paths = boards.map((board) => ({
+    params: { id: board.id.toString() }
+  }))
+
+  return { paths, fallback: 'blocking' }
+}
+
+export default BoardView
