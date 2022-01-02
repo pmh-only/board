@@ -17,21 +17,27 @@ const Home: NextPage = () => {
   return (
     <PageAnimation>
       <Container>
-        <div className="flex flex-wrap justify-center gap-8 mt-5 items-center">
+        <div className="flex flex-wrap items-center justify-center gap-8 mt-5">
           {data && data.boards.map((v: Board & { image?: string }) => (
             <Link key={v.id} href={`/${v.id}`} passHref>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white hover:bg-neutral-50 rounded shadow max-w-xs w-full hover:outline outline-3 outline-blue-200 hover:shadow-md transition-all cursor-pointer">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-xs transition-all bg-white rounded shadow cursor-pointer hover:bg-neutral-50 hover:outline outline-3 outline-blue-200 hover:shadow-md">
                 <Image url={v.image || `https://picsum.photos/200?blur#${v.id}`} alt={v.title} />
-                <div className="px-5 py-3 flex flex-col gap-1">
-                  <h1 className="font-bold text-xl">{v.title}</h1>
-                  <p className="text-sm text-neutral-500 text-ellipsis break-all whitespace-nowrap overflow-hidden">{v.content.replace(/<[^>]*>?/gm, '') || '본문이 없습니다'}</p>
-                  <p className="text-xs text-neutral-500 flex items-center gap-1">
-                    <ClockIcon className="w-4 h-4 inline"/>
+                <div className="flex flex-col gap-1 px-5 py-3">
+                  <h1 className="text-xl font-bold">{v.title}</h1>
+                  <p className="overflow-hidden text-sm break-all text-neutral-500 text-ellipsis whitespace-nowrap">{v.content.replace(/<[^>]*>?/gm, '') || '본문이 없습니다'}</p>
+                  <p className="flex items-center gap-1 text-xs text-neutral-500">
+                    <ClockIcon className="inline w-4 h-4"/>
                     <p>{moment(v.created_at).format('YYYY년 MM월 DD일')}</p>
-                    <EyeIcon className="w-4 h-4 inline" />
+                    <EyeIcon className="inline w-4 h-4" />
                     <p>{v.views}</p>
                   </p>
-                  <p className="flex gap-1 text-sm text-neutral-700">{v.tags.split(',').filter((tag) => tag).map((tag, i) => <span key={i} className="px-2 rounded-full bg-blue-200">#{tag}</span>)}</p>
+                  <p className="flex flex-wrap gap-1 text-sm text-neutral-700">
+                    {v.tags.split(',')
+                      .filter((tag) => tag)
+                      .map((tag, i) =>
+                        <span key={i} className="px-2 bg-blue-200 rounded-full">#{tag}</span>
+                      )}
+                  </p>
                 </div>
               </motion.div>
             </Link>
