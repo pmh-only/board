@@ -10,7 +10,7 @@ html {
   @apply overflow-x-hidden bg-neutral-100;
 }
 
-.sun-editor-editable {
+.toastui-editor-contents {
   font-family: 'Noto Sans KR', sans-serif !important;
 }
 
