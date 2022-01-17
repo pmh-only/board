@@ -112,7 +112,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
                   </div>
                 </div>
 
-                <div className="px-3">
+                <div className="px-5 py-2">
                   <Viewer content={board.content}/>
                 </div>
               </div>
@@ -157,7 +157,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
                 ))}
               </div>
               <form className="flex gap-2 p-2">
-                <textarea placeholder="여기를 눌러 댓글 작성을 시작하세요." className="w-full p-3 text-sm border rounded-lg resize-none"></textarea>
+                <textarea placeholder="여기를 눌러 댓글 작성을 시작하세요." className="w-full p-3 text-sm border rounded-lg outline-none resize-none focus:border-neutral-700"></textarea>
                 <div className="flex flex-col gap-2">
                   <button className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">익명으로 작성</button>
                   <button className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">Github계정으로 작성</button>
