@@ -2,6 +2,7 @@ import shajs from 'sha.js'
 import { getClientIp } from 'request-ip'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createDBConnection } from '../../../../utils/db'
+import { tokenVerify } from '../../../../utils/jwt'
 
 const commentCooldown: string[] = []
 
@@ -39,5 +40,19 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
       return res.send({ success: true })
     }
+  }
+
+  if (req.method === 'DELETE') {
+    const { token } = req.cookies
+    const { id } = req.body
+
+    if (!token || !id) return res.send({ success: false })
+
+    if (!tokenVerify(token)) {
+      return res.send({ success: false, message: 'invalid token' })
+    }
+
+    await db.del().from('comments').where({ id })
+    res.send({ success: true })
   }
 }

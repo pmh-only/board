@@ -79,7 +79,25 @@ const BoardView: NextPage<Props> = ({ board }) => {
       error: '댓글 작성은 1분당 한번만 가능합니다',
       success: '댓글이 작성되었습니다',
       loading: '댓글 작성 처리중...'
-    }).then(() => setContent(''))
+    }, { position: 'bottom-center' }).then(() => setContent(''))
+
+    mutate()
+  }
+
+  async function deleteComment (id: number) {
+    toast.promise(new Promise((resolve) => {
+      fetch(`/api/board/${board.id}/comments`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id })
+      }).then(() => resolve(null))
+    }), {
+      error: '권한이 부족합니다',
+      success: '댓글이 삭제되었습니다',
+      loading: '댓글 삭제 처리중...'
+    }, { position: 'bottom-center' })
 
     mutate()
   }
@@ -173,7 +191,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
 
                 {commentData && commentData.comments.length > 0 && commentData.comments.filter((v: any) => !v.reply_id).map((v: any, i: number) => (
                   <div key={i} className="items-center justify-center px-5 py-3 transition-colors border-b hover:bg-neutral-50">
-                    <div className="text-md text-neutral-700">{v.author} <span className="inline-flex items-center text-xs text-neutral-500">{moment(v.created_at).format('YYYY년 MM월 DD일')}</span></div>
+                    <div className="flex gap-1 text-md text-neutral-700">{v.author} <span className="inline-flex items-center text-xs text-neutral-500">{moment(v.created_at).format('YYYY년 MM월 DD일 hh:mm')}</span> {editBtnVisiable && <button className="transition-colors hover:text-red-400" onClick={() => deleteComment(v.id)}><TrashIcon className="w-4 h-4" /></button>}</div>
                     <div className="text-sm text-neutral-500">{v.content}</div>
                   </div>
                 ))}
