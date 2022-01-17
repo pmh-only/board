@@ -21,6 +21,7 @@ import { createDBConnection } from '../utils/db'
 import { Board } from 'knex/types/tables'
 import useSWR from 'swr'
 import Spinner from '../components/Spinner'
+import toast from 'react-hot-toast'
 
 const Viewer = dynamic(() => import('../components/Viewer'), { ssr: false })
 
@@ -31,10 +32,11 @@ interface Props {
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 const BoardView: NextPage<Props> = ({ board }) => {
+  const [content, setContent] = useState('')
   const [editBtnVisiable, setEditBtnVisiable] = useState(false)
   const image = useRef(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/g.exec(board.content)?.[1])
 
-  const { data: commentData, error } = useSWR(`/api/board/${board.id}/comments`, fetcher)
+  const { data: commentData, error, mutate } = useSWR(`/api/board/${board.id}/comments`, fetcher)
 
   useEffect(() => {
     fetch(`/api/view?id=${board.id}`)
@@ -61,6 +63,26 @@ const BoardView: NextPage<Props> = ({ board }) => {
       ReactTooltip.rebuild()
     })()
   }, [])
+
+  async function commentByIp () {
+    if (content.length < 1) return
+
+    toast.promise(new Promise((resolve, reject) => {
+      fetch(`/api/board/${board.id}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'IP', content })
+      }).then((res) => res.json()).then((res) => res.success ? resolve(null) : reject(res.error))
+    }), {
+      error: '댓글 작성은 1분당 한번만 가능합니다',
+      success: '댓글이 작성되었습니다',
+      loading: '댓글 작성 처리중...'
+    }).then(() => setContent(''))
+
+    mutate()
+  }
 
   return (
     <PageAnimation>
@@ -150,16 +172,16 @@ const BoardView: NextPage<Props> = ({ board }) => {
                 )}
 
                 {commentData && commentData.comments.length > 0 && commentData.comments.filter((v: any) => !v.reply_id).map((v: any, i: number) => (
-                  <div key={i} className="items-center justify-center py-10 text-neutral-500">
-                    <div>{v.author}</div>
-                    <div>{v.content}</div>
+                  <div key={i} className="items-center justify-center px-5 py-3 transition-colors border-b hover:bg-neutral-50">
+                    <div className="text-md text-neutral-700">{v.author} <span className="inline-flex items-center text-xs text-neutral-500">{moment(v.created_at).format('YYYY년 MM월 DD일')}</span></div>
+                    <div className="text-sm text-neutral-500">{v.content}</div>
                   </div>
                 ))}
               </div>
               <form className="flex gap-2 p-2">
-                <textarea placeholder="여기를 눌러 댓글 작성을 시작하세요." className="w-full p-3 text-sm border rounded-lg outline-none resize-none focus:border-neutral-700"></textarea>
+                <textarea autoComplete="off" value={content} onChange={(e) => setContent(e.target.value)} placeholder="여기를 눌러 댓글 작성을 시작하세요." className="w-full p-3 text-sm border rounded-lg outline-none resize-none focus:border-neutral-700"></textarea>
                 <div className="flex flex-col gap-2">
-                  <button className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">익명으로 작성</button>
+                  <button type="button" onClick={commentByIp} className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">익명으로 작성</button>
                   <button className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">Github계정으로 작성</button>
                 </div>
               </form>
