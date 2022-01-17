@@ -1,7 +1,7 @@
 import moment from 'moment'
 import Head from 'next/head'
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next'
-import { EyeIcon, PencilAltIcon, TrashIcon, XCircleIcon } from '@heroicons/react/outline'
+import { ExclamationCircleIcon, EyeIcon, PencilAltIcon, TrashIcon, XCircleIcon } from '@heroicons/react/outline'
 
 import 'prismjs/themes/prism-tomorrow.css'
 import '@toast-ui/chart/dist/toastui-chart.css'
@@ -19,6 +19,8 @@ import { parse } from 'cookie'
 import ReactTooltip from 'react-tooltip'
 import { createDBConnection } from '../utils/db'
 import { Board } from 'knex/types/tables'
+import useSWR from 'swr'
+import Spinner from '../components/Spinner'
 
 const Viewer = dynamic(() => import('../components/Viewer'), { ssr: false })
 
@@ -26,9 +28,13 @@ interface Props {
   board: Board
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
 const BoardView: NextPage<Props> = ({ board }) => {
   const [editBtnVisiable, setEditBtnVisiable] = useState(false)
   const image = useRef(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/g.exec(board.content)?.[1])
+
+  const { data: commentData, error } = useSWR(`/api/board/${board.id}/comments`, fetcher)
 
   useEffect(() => {
     fetch(`/api/view?id=${board.id}`)
@@ -74,8 +80,8 @@ const BoardView: NextPage<Props> = ({ board }) => {
       </Head>
 
       <Container className="max-w-4xl">
-        <div className="flex min-h-full py-5">
-          <div className="bg-white rounded shadow grow">
+        <div className="flex flex-col min-h-full gap-6 py-5">
+          <div className="bg-white rounded-lg shadow grow">
             {!board &&
               <div className="flex items-center justify-center h-full gap-1 text-sm text-neutral-500">
                 <XCircleIcon className="w-5 h-5"/> 없는 페이지입니다.
@@ -83,7 +89,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
 
             {board && (
               <div>
-                <div className="sticky z-40 flex items-center justify-between px-5 py-2 border-b top-10 bg-neutral-100">
+                <div className="sticky z-40 flex items-center justify-between px-5 py-2 border-b rounded-t-lg top-10 bg-neutral-100">
                   <div className="flex items-end gap-3">
                     <h1 className="text-xl font-bold">{board.title}</h1>
                     <p className="py-1 text-xs text-neutral-500">{moment(board.created_at).format('YYYY년 MM월 DD일')}</p>
@@ -92,14 +98,14 @@ const BoardView: NextPage<Props> = ({ board }) => {
                   <div className="flex gap-1 text-neutral-500">
                     {editBtnVisiable &&
                       <Link passHref href={`/edit?id=${board.id}`}>
-                        <div data-tip="수정" className="p-1 transition-all rounded cursor-pointer hover:bg-neutral-200">
+                        <div data-tip="수정" className="p-1 transition-all rounded-lg cursor-pointer hover:bg-neutral-200">
                           <PencilAltIcon className="w-5 h-5"/>
                         </div>
                       </Link>}
 
                     {editBtnVisiable &&
                       <Link passHref href={`/delete?id=${board.id}`}>
-                        <div data-tip="삭제" className="p-1 transition-all rounded cursor-pointer hover:bg-neutral-200">
+                        <div data-tip="삭제" className="p-1 transition-all rounded-lg cursor-pointer hover:bg-neutral-200">
                           <TrashIcon className="w-5 h-5"/>
                         </div>
                       </Link>}
@@ -112,6 +118,53 @@ const BoardView: NextPage<Props> = ({ board }) => {
               </div>
             )}
           </div>
+
+          {board && (
+            <div className="bg-white rounded-lg shadow">
+              <div className="px-4 py-2 border-b rounded-t-lg top-10 bg-neutral-100">
+                <div className="flex items-end gap-1">
+                  <h1 className="text-xl font-bold">댓글</h1>
+                  <p className="py-0.5 text-xs text-neutral-500">Comments.</p>
+                </div>
+              </div>
+              <div>
+                {!commentData && (
+                  <div className="flex items-center justify-center gap-2 py-10 text-neutral-500">
+                    <Spinner /> <div>댓글을 로딩중이에요!</div>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="flex items-center justify-center gap-1 py-10 text-red-500">
+                    <ExclamationCircleIcon className="w-5 h-5"/><div>댓글을 불러오는데 실패했어요</div>
+                  </div>
+                )}
+
+                {commentData && !commentData.comments.length && (
+                  <div className="py-10 text-center text-neutral-500">
+                    <div className="flex items-center justify-center gap-1">
+                      <XCircleIcon className="w-5 h-5"/><div>댓글이 없어요.. 힝힝...ㅠㅠ</div>
+                    </div>
+                    <span className="text-xs">(뭐라도 적어줘요)</span>
+                  </div>
+                )}
+
+                {commentData && commentData.comments.length > 0 && commentData.comments.filter((v: any) => !v.reply_id).map((v: any, i: number) => (
+                  <div key={i} className="items-center justify-center py-10 text-neutral-500">
+                    <div>{v.author}</div>
+                    <div>{v.content}</div>
+                  </div>
+                ))}
+              </div>
+              <form className="flex gap-2 p-2">
+                <textarea placeholder="여기를 눌러 댓글 작성을 시작하세요." className="w-full p-3 text-sm border rounded-lg resize-none"></textarea>
+                <div className="flex flex-col gap-2">
+                  <button className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">익명으로 작성</button>
+                  <button className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">Github계정으로 작성</button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </Container>
     </PageAnimation>
