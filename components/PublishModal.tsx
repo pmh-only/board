@@ -78,7 +78,7 @@ const PublishModal: NextPage<Props> = ({ isOpen, onRequestClose, content, id }) 
       className="p-0"
       isOpen={isOpen}>
       <motion.form initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={onSubmit} onClick={(e) => e.target instanceof HTMLFormElement && onRequestClose()} id="modal-bg" className="absolute z-50 flex items-start justify-center w-screen h-screen pt-16 bg-black bg-opacity-25 backdrop-blur">
-        <div className="flex flex-col gap-3 p-5 bg-white rounded shadow">
+        <div className="flex flex-col gap-3 p-5 bg-white rounded-lg shadow">
           <h1 className="text-xl font-bold">글쓰기</h1>
           <div className="flex items-center px-3 py-2 mt-3 outline outline-1 outline-neutral-400 focus-within:outline-blue-400">
             <label htmlFor="title" className="flex items-center"><DocumentIcon className="inline w-5 h-5 mr-3"/></label>

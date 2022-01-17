@@ -21,7 +21,7 @@ const Logout: NextPage = () => {
     <PageAnimation>
       <Container>
         <div className="flex justify-center py-10">
-          <div className="p-5 bg-white rounded shadow select-none">
+          <div className="p-5 bg-white rounded-lg shadow select-none">
             <form onSubmit={onSubmit} className="flex flex-col gap-5 px-3 mt-5">
               <p>로그아웃 하시겠습니까?</p>
               <button type="submit" className="self-end px-3 py-2 text-white bg-neutral-700 hover:bg-neutral-800">로그아웃</button>

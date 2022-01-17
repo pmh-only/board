@@ -21,16 +21,14 @@ const Home: NextPage = () => {
         <div className="flex flex-wrap justify-center gap-6 my-5 lg:gap-8">
           {data && data.boards.map((v: Board & { image?: string }) => (
             <Link key={v.id} href={`/${v.id}`} passHref>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative w-full transition-all bg-white rounded shadow cursor-pointer md:max-w-xs hover:bg-neutral-50 hover:outline outline-3 outline-blue-200 hover:shadow-md">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative w-full transition-all bg-white rounded-lg shadow cursor-pointer md:max-w-xs hover:bg-neutral-50 hover:outline outline-3 outline-blue-200 hover:shadow-md">
                 <Image url={v.image || `https://picsum.photos/200?blur#${v.id}`} alt={v.title} />
                 <div className="flex flex-col gap-1 px-5 py-3">
                   <h1 className="text-xl font-bold">{v.title}</h1>
                   <p className="overflow-hidden text-sm break-all text-neutral-500 text-ellipsis whitespace-nowrap">{v.content.replace(/<[^>]*>?/gm, '') || '본문이 없습니다'}</p>
-                  <p className="flex items-center gap-1 text-xs text-neutral-500">
-                    <ClockIcon className="inline w-4 h-4"/>
-                    <p>{moment(v.created_at).format('YYYY년 MM월 DD일')}</p>
-                    <EyeIcon className="inline w-4 h-4" />
-                    <p>{v.views}</p>
+                  <p className="flex items-center gap-3 text-xs text-neutral-500">
+                    <p><ClockIcon className="inline w-4 h-4"/> {moment(v.created_at).format('YYYY년 MM월 DD일')}</p>
+                    <p><EyeIcon className="inline w-4 h-4" /> {v.views}</p>
                   </p>
                   <ScrollContainer className="mt-1 overflow-x-hidden text-sm select-none text-neutral-700" style={{ wordBreak: 'keep-all' }}>
                     {v.tags.split(',')

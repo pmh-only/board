@@ -26,7 +26,7 @@ const DeletePage: NextPage = () => {
     <PageAnimation>
       <Container>
         <div className="flex justify-center py-10">
-          <div className="p-5 bg-white rounded shadow select-none">
+          <div className="p-5 bg-white rounded-lg shadow select-none">
             <form onSubmit={onSubmit} className="flex flex-col gap-5 px-3 mt-5">
               <p>삭제하시겠습니까?</p>
               <button type="submit" className="self-end px-3 py-2 text-white bg-red-700 hover:bg-red-800">삭제</button>

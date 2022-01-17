@@ -15,7 +15,7 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 const TagPage: NextPage = () => {
   const router = useRouter()
-  const { data } = useSWR(`/api/board?y=${router.query.tag}`, fetcher)
+  const { data } = useSWR(`/api/board?has=${router.query.tag}`, fetcher)
 
   return (
     <PageAnimation>
@@ -23,7 +23,7 @@ const TagPage: NextPage = () => {
         <div className="flex flex-wrap justify-center gap-6 my-5 lg:gap-8">
           {data && data.boards.map((v: Board & { image?: string }) => (
             <Link key={v.id} href={`/${v.id}`} passHref>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative w-full transition-all bg-white rounded shadow cursor-pointer md:max-w-xs hover:bg-neutral-50 hover:outline outline-3 outline-blue-200 hover:shadow-md">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative w-full transition-all bg-white rounded-lg shadow cursor-pointer md:max-w-xs hover:bg-neutral-50 hover:outline outline-3 outline-blue-200 hover:shadow-md">
                 <Image url={v.image || `https://picsum.photos/200?blur#${v.id}`} alt={v.title} />
                 <div className="flex flex-col gap-1 px-5 py-3">
                   <h1 className="text-xl font-bold">{v.title}</h1>

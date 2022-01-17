@@ -43,7 +43,7 @@ const Login: NextPage = () => {
     <PageAnimation>
       <Container>
         <div className="flex justify-center py-10">
-          <div className="p-5 bg-white rounded shadow select-none">
+          <div className="p-5 bg-white rounded-lg shadow select-none">
             <h1 className="text-xl font-bold">로그인</h1>
             <form onSubmit={onSubmit} className="flex flex-col gap-3 px-3 mt-5">
               <div className="flex items-center px-3 py-2 bg-gray-200 focus:outline-none outline outline-1 outline-neutral-400 focus:outline-blue-400">

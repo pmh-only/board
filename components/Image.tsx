@@ -14,10 +14,10 @@ const Image: NextPage<Props> = ({ url, alt }) => {
   return (
     <div className="flex justify-center">
       {!isLoaded &&
-        <NextImage src="/loading.png" width={160} height={160} />}
+        <NextImage className="rounded-t-lg" src="/loading.png" width={160} height={160} />}
       <img src={url} alt={alt}
         onLoad={() => setIsLoaded(true)}
-        className={`rounded-t w-full h-40 object-cover ${isLoaded ? 'block' : 'hidden'}`}/>
+        className={`rounded-lg rounded-b-none w-full h-40 object-cover ${isLoaded ? 'block' : 'hidden'}`}/>
     </div>
   )
 }
