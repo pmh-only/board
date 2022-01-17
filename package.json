@@ -44,6 +44,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hot-toast": "^2.1.1",
+    "react-indiana-drag-scroll": "^2.1.0",
     "react-modal": "^3.14.4",
     "react-tooltip": "^4.2.21",
     "sha.js": "^2.4.11",

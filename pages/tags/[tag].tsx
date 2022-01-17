@@ -1,19 +1,21 @@
 import useSWR from 'swr'
 import type { NextPage } from 'next'
 import { Board } from 'knex/types/tables'
-import Container from '../components/Container'
-import PageAnimation from '../components/PageAnimation'
+import Container from '../../components/Container'
+import PageAnimation from '../../components/PageAnimation'
 import moment from 'moment'
 import { ClockIcon, EyeIcon } from '@heroicons/react/outline'
 import Link from 'next/link'
-import Image from '../components/Image'
+import Image from '../../components/Image'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 import ScrollContainer from 'react-indiana-drag-scroll'
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
-const Home: NextPage = () => {
-  const { data } = useSWR('/api/board', fetcher)
+const TagPage: NextPage = () => {
+  const router = useRouter()
+  const { data } = useSWR(`/api/board?y=${router.query.tag}`, fetcher)
 
   return (
     <PageAnimation>
@@ -36,7 +38,7 @@ const Home: NextPage = () => {
                     {v.tags.split(',')
                       .filter((tag) => tag)
                       .map((tag, i) =>
-                        <Link key={i} href={`/tags/${tag.trim()}`} passHref><span className="px-2 mr-1 transition-colors bg-blue-200 rounded-full hover:bg-blue-300">#{tag.trim()}</span></Link>
+                      <Link key={i} href={`/tags/${tag.trim()}`} passHref><span className="px-2 mr-1 transition-colors bg-blue-200 rounded-full hover:bg-blue-300">#{tag.trim()}</span></Link>
                       )}
                   </ScrollContainer>
                 </div>
@@ -50,4 +52,4 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default TagPage
