@@ -33,6 +33,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 const BoardView: NextPage<Props> = ({ board }) => {
   const [content, setContent] = useState('')
+  const [scrolls, setScrolls] = useState(false)
   const [editBtnVisiable, setEditBtnVisiable] = useState(false)
   const image = useRef(/!\[[^\]]*\]\((.*?)\s*("(?:.*[^"])")?\s*\)/g.exec(board.content)?.[1])
 
@@ -62,6 +63,10 @@ const BoardView: NextPage<Props> = ({ board }) => {
       setEditBtnVisiable(true)
       ReactTooltip.rebuild()
     })()
+
+    window.addEventListener('scroll', () => {
+      setScrolls(window.scrollY > 30)
+    })
   }, [])
 
   async function commentByIp () {
@@ -79,9 +84,11 @@ const BoardView: NextPage<Props> = ({ board }) => {
       error: '댓글 작성은 1분당 한번만 가능합니다',
       success: '댓글이 작성되었습니다',
       loading: '댓글 작성 처리중...'
-    }, { position: 'bottom-center' }).then(() => setContent(''))
-
-    mutate()
+    }, { position: 'bottom-center' })
+      .then(() => {
+        setContent('')
+        mutate()
+      })
   }
 
   async function deleteComment (id: number) {
@@ -98,8 +105,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
       success: '댓글이 삭제되었습니다',
       loading: '댓글 삭제 처리중...'
     }, { position: 'bottom-center' })
-
-    mutate()
+      .then(() => mutate())
   }
 
   return (
@@ -129,27 +135,29 @@ const BoardView: NextPage<Props> = ({ board }) => {
 
             {board && (
               <div>
-                <div className="sticky z-40 flex items-center justify-between px-5 py-2 border-b rounded-t-lg top-10 bg-neutral-100">
+                <div className={`sticky z-40 transition-all flex items-center px-5 ${scrolls ? 'fixed top-0 bg-transparent justify-center py-1' : 'rounded-t-lg justify-between border-b py-2'} top-10 bg-neutral-100`}>
                   <div className="flex items-end gap-3">
-                    <h1 className="text-xl font-bold">{board.title}</h1>
-                    <p className="py-1 text-xs text-neutral-500">{moment(board.created_at).format('YYYY년 MM월 DD일')}</p>
+                    <h1 className="text-xl font-bold text-neutral-600">{board.title}</h1>
+                    {!scrolls && <p className="hidden py-1 text-xs sm:block text-neutral-500">{moment(board.created_at).format('YYYY년 MM월 DD일')}</p>}
                     <p className="flex items-end gap-1 py-1 text-xs text-neutral-500"><EyeIcon className="w-3 h-3"/> {board.views}</p>
                   </div>
-                  <div className="flex gap-1 text-neutral-500">
-                    {editBtnVisiable &&
-                      <Link passHref href={`/edit?id=${board.id}`}>
-                        <div data-tip="수정" className="p-1 transition-all rounded-lg cursor-pointer hover:bg-neutral-200">
-                          <PencilAltIcon className="w-5 h-5"/>
-                        </div>
-                      </Link>}
+                  {!scrolls && (
+                    <div className="flex gap-1 text-neutral-500">
+                      {editBtnVisiable &&
+                        <Link passHref href={`/edit?id=${board.id}`}>
+                          <div data-tip="수정" className="p-1 transition-all rounded-lg cursor-pointer hover:bg-neutral-200">
+                            <PencilAltIcon className="w-5 h-5"/>
+                          </div>
+                        </Link>}
 
-                    {editBtnVisiable &&
-                      <Link passHref href={`/delete?id=${board.id}`}>
-                        <div data-tip="삭제" className="p-1 transition-all rounded-lg cursor-pointer hover:bg-neutral-200">
-                          <TrashIcon className="w-5 h-5"/>
-                        </div>
-                      </Link>}
-                  </div>
+                      {editBtnVisiable &&
+                        <Link passHref href={`/delete?id=${board.id}`}>
+                          <div data-tip="삭제" className="p-1 transition-all rounded-lg cursor-pointer hover:bg-neutral-200">
+                            <TrashIcon className="w-5 h-5"/>
+                          </div>
+                        </Link>}
+                    </div>
+                  )}
                 </div>
 
                 <div className="px-5 py-2">
@@ -163,7 +171,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
             <div className="bg-white rounded-lg shadow">
               <div className="px-4 py-2 border-b rounded-t-lg top-10 bg-neutral-100">
                 <div className="flex items-end gap-1">
-                  <h1 className="text-xl font-bold">댓글</h1>
+                  <h1 className="text-xl font-bold text-neutral-700">댓글</h1>
                   <p className="py-0.5 text-xs text-neutral-500">Comments.</p>
                 </div>
               </div>
