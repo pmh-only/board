@@ -162,10 +162,10 @@ const BoardView: NextPage<Props> = ({ board }) => {
 
             {board && (
               <div>
-                <div className={`sticky z-40 transition-all flex items-center px-5 ${scrolls ? 'fixed top-0 bg-transparent justify-center py-1' : 'rounded-t-lg justify-between border-b py-2'} top-10 bg-neutral-100`}>
-                  <div className="flex items-end gap-3">
-                    <h1 className="text-xl font-bold text-neutral-600">{board.title}</h1>
-                    {!scrolls && <p className="hidden py-1 text-xs sm:block text-neutral-500">{moment(board.created_at).format('YYYY년 MM월 DD일')}</p>}
+                <div className={`sticky z-40 transition-all flex items-center ${scrolls ? 'fixed top-0 bg-transparent justify-center py-1 px-32' : 'rounded-t-lg justify-between border-b py-2 bg-neutral-100 px-5'}`}>
+                  <div className="flex items-end w-full gap-3">
+                    <h1 className="flex-1 max-w-full overflow-hidden text-xl font-bold break-all text-ellipsis text-neutral-600 whitespace-nowrap">{board.title}</h1>
+                    <p className="hidden py-1 text-xs sm:block text-neutral-500">{moment(board.created_at).format('YYYY년 MM월 DD일')}</p>
                     <p className="flex items-end gap-1 py-1 text-xs text-neutral-500"><EyeIcon className="w-3 h-3"/> {board.views}</p>
                   </div>
                   {!scrolls && (
@@ -226,7 +226,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
 
                 {commentData && commentData.comments.length > 0 && commentData.comments.filter((v: any) => !v.reply_id).map((v: any, i: number) => (
                   <div key={i} className="items-center justify-center px-5 py-3 transition-colors border-b hover:bg-neutral-50">
-                    <div className="flex gap-1 text-sm text-neutral-700">{v.author.startsWith('@') ? <Link href={`https://github.com/${v.author.slice(1)}`} passHref><b data-tip="클릭해 깃허브 프로필로 이동" className="cursor-pointer">{v.author}</b></Link> : v.author} <span className="inline-flex items-center text-xs text-neutral-500">{moment(v.created_at).format('YYYY년 MM월 DD일 hh:mm')}</span> {editBtnVisiable && <button className="transition-colors hover:text-red-400" onClick={() => deleteComment(v.id)}><TrashIcon className="w-4 h-4" /></button>}</div>
+                    <div className="flex gap-1 text-sm text-neutral-700">{v.author.startsWith('@') ? <Link href={`https://github.com/${v.author.slice(1)}`} passHref><b data-tip="Github 프로필로 이동" className="cursor-pointer">{v.author}</b></Link> : v.author} <span className="inline-flex items-center text-xs text-neutral-500">{moment(v.created_at).format('YYYY년 MM월 DD일 hh:mm')}</span> {editBtnVisiable && <button className="transition-colors hover:text-red-400" onClick={() => deleteComment(v.id)}><TrashIcon className="w-4 h-4" /></button>}</div>
                     <div className="text-sm text-neutral-500">{v.content}</div>
                   </div>
                 ))}
