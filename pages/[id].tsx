@@ -70,7 +70,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
   }, [])
 
   async function commentByIp () {
-    if (content.length < 1) return
+    if (content.length < 1) return toast.error('댓글 내용을 입력해주세요.', { position: 'bottom-center' })
 
     toast.promise(new Promise((resolve, reject) => {
       fetch(`/api/board/${board.id}/comments`, {
@@ -89,6 +89,33 @@ const BoardView: NextPage<Props> = ({ board }) => {
         setContent('')
         mutate()
       })
+  }
+
+  async function commentByGithub () {
+    if (content.length < 1) return toast.error('댓글 내용을 입력해주세요.', { position: 'bottom-center' })
+
+    toast.promise(new Promise((resolve, reject) => {
+      fetch(`/api/board/${board.id}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'Github', content })
+      }).then((res) => res.json())
+        .then((res) =>
+          res.success
+            ? resolve(null)
+            : reject(res.message))
+    }), {
+      error: (error) => error !== 'GITHUB_TOKEN_ERROR'
+        ? '댓글 작성은 1분당 한번만 가능합니다'
+        : '깃허브 로그인이 필요합니다.',
+      success: '댓글이 작성되었습니다',
+      loading: '댓글 작성 처리중...'
+    }, { position: 'bottom-center' })
+      .then(() => { setContent(''); mutate() })
+      .catch((error) =>
+        error === 'GITHUB_TOKEN_ERROR' && window.open('/api/auth/github'))
   }
 
   async function deleteComment (id: number) {
@@ -199,7 +226,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
 
                 {commentData && commentData.comments.length > 0 && commentData.comments.filter((v: any) => !v.reply_id).map((v: any, i: number) => (
                   <div key={i} className="items-center justify-center px-5 py-3 transition-colors border-b hover:bg-neutral-50">
-                    <div className="flex gap-1 text-md text-neutral-700">{v.author} <span className="inline-flex items-center text-xs text-neutral-500">{moment(v.created_at).format('YYYY년 MM월 DD일 hh:mm')}</span> {editBtnVisiable && <button className="transition-colors hover:text-red-400" onClick={() => deleteComment(v.id)}><TrashIcon className="w-4 h-4" /></button>}</div>
+                    <div className="flex gap-1 text-sm text-neutral-700">{v.author.startsWith('@') ? <Link href={`https://github.com/${v.author.slice(1)}`} passHref><b data-tip="클릭해 깃허브 프로필로 이동" className="cursor-pointer">{v.author}</b></Link> : v.author} <span className="inline-flex items-center text-xs text-neutral-500">{moment(v.created_at).format('YYYY년 MM월 DD일 hh:mm')}</span> {editBtnVisiable && <button className="transition-colors hover:text-red-400" onClick={() => deleteComment(v.id)}><TrashIcon className="w-4 h-4" /></button>}</div>
                     <div className="text-sm text-neutral-500">{v.content}</div>
                   </div>
                 ))}
@@ -208,7 +235,7 @@ const BoardView: NextPage<Props> = ({ board }) => {
                 <textarea autoComplete="off" value={content} onChange={(e) => setContent(e.target.value)} placeholder="여기를 눌러 댓글 작성을 시작하세요." className="w-full p-3 text-sm border rounded-lg outline-none resize-none focus:border-neutral-700"></textarea>
                 <div className="flex flex-col gap-2">
                   <button type="button" onClick={commentByIp} className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">익명으로 작성</button>
-                  <button className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">Github계정으로 작성</button>
+                  <button type="button" onClick={commentByGithub} className="p-1 text-sm transition-colors border rounded-lg hover:bg-neutral-700 hover:text-white">Github계정으로 작성</button>
                 </div>
               </form>
             </div>
