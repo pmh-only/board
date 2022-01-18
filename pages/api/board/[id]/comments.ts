@@ -1,78 +1,93 @@
 import shajs from 'sha.js'
 import { getClientIp } from 'request-ip'
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiHandler } from 'next'
 import { createDBConnection } from '../../../../utils/db'
 import { tokenVerify, tokenVerifyAndGetSubject } from '../../../../utils/jwt'
 
 const commentCooldown: string[] = []
 
-export default async function handler (req: NextApiRequest, res: NextApiResponse) {
+/** 댓글 목록 불러오기 API */
+const GET: NextApiHandler = async (req, res) => {
+  const db = createDBConnection()
+  const comments =
+    await db
+      .select('*')
+      .from('comments')
+      .orderBy('id', 'desc')
+      .where('board_id', req.query.id)
+
+  return res.send({ comments })
+}
+
+/** 댓글 작성 API */
+const POST: NextApiHandler = async (req, res) => {
+  const { token } = req.cookies
+  const { type, content } = req.body
+
+  const db = createDBConnection()
+  const author =
+    type === 'Github'
+      ? tokenVerifyAndGetSubject(token)
+      : getClientIp(req)
+
+  if (!author) {
+    return res.send({ success: false, message: 'GITHUB_TOKEN_ERROR' })
+  }
+
+  if (commentCooldown.includes(author)) {
+    return res.send({ success: false })
+  }
+
+  commentCooldown.push(author)
+  setTimeout(() =>
+    commentCooldown.splice(commentCooldown.indexOf(author), 1)
+  , 60 * 1000)
+
+  const authorHashed =
+    shajs('sha256')
+      .update(author)
+      .digest('hex')
+      .substring(0, 5)
+
+  const authorCalc =
+    type === 'Github'
+      ? `@${author}`
+      : `익명 (${authorHashed})`
+
+  await db.insert({
+    board_id: req.query.id,
+    content,
+    author: authorCalc
+  }).into('comments')
+
+  return res.send({ success: true })
+}
+
+/** 댓글 관리/삭제 API */
+const DELETE: NextApiHandler = async (req, res) => {
   const db = createDBConnection()
 
-  if (req.method === 'GET') {
-    const comments =
-      await db
-        .select('*')
-        .from('comments')
-        .orderBy('id', 'desc')
-        .where('board_id', req.query.id)
+  const { token } = req.cookies
+  const { id } = req.body
 
-    return res.send({ comments })
+  if (!token || !id) return res.send({ success: false })
+
+  if (!tokenVerify(token)) {
+    return res.send({ success: false, message: 'invalid token' })
   }
 
-  if (req.method === 'POST') {
-    const { type, content } = req.body
+  await db
+    .delete()
+    .from('comments')
+    .where({ id })
 
-    if (!type) return res.send({ success: false, message: 'invalid comment type' })
-    if (type === 'IP') {
-      const ip = getClientIp(req)!
-
-      if (commentCooldown.includes(ip)) {
-        return res.send({ success: false, message: 'uhhuh.. you are writting to fast!' })
-      }
-
-      commentCooldown.push(ip)
-      setTimeout(() => {
-        commentCooldown.splice(commentCooldown.indexOf(ip), 1)
-      }, 60 * 1000)
-
-      await db.insert({ board_id: req.query.id, content, author: `익명 (${shajs('sha256').update(ip).digest('hex').substring(0, 5)})` }).into('comments')
-
-      return res.send({ success: true })
-    }
-
-    if (type === 'Github') {
-      const { token } = req.cookies
-      const username = tokenVerifyAndGetSubject(token)
-
-      if (!username) return res.send({ success: false, message: 'GITHUB_TOKEN_ERROR' })
-
-      if (commentCooldown.includes(username)) {
-        return res.send({ success: false, message: 'uhhuh.. you are writting to fast!' })
-      }
-
-      commentCooldown.push(username)
-      setTimeout(() => {
-        commentCooldown.splice(commentCooldown.indexOf(username), 1)
-      }, 60 * 1000)
-
-      await db.insert({ board_id: req.query.id, content, author: '@' + username }).into('comments')
-
-      return res.send({ success: true })
-    }
-  }
-
-  if (req.method === 'DELETE') {
-    const { token } = req.cookies
-    const { id } = req.body
-
-    if (!token || !id) return res.send({ success: false })
-
-    if (!tokenVerify(token)) {
-      return res.send({ success: false, message: 'invalid token' })
-    }
-
-    await db.del().from('comments').where({ id })
-    res.send({ success: true })
-  }
+  res.send({ success: true })
 }
+
+const API: NextApiHandler = (req, res) => {
+  if (req.method === 'GET') GET(req, res)
+  if (req.method === 'POST') POST(req, res)
+  if (req.method === 'DELETE') DELETE(req, res)
+}
+
+export default API

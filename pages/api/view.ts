@@ -1,12 +1,17 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiHandler } from 'next'
 import { createDBConnection } from '../../utils/db'
 
-export default async function handler (req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'GET') {
-    const id = req.query.id as string
-    const db = createDBConnection()
-    await db.increment('views').from('board').where('id', id)
+/** 게시글 조회수 카운트 API */
+const API: NextApiHandler = async (req, res) => {
+  const id = req.query.id as string
+  const db = createDBConnection()
 
-    return res.send('ok')
-  }
+  await db
+    .increment('views')
+    .from('board')
+    .where('id', id)
+
+  return res.send('ok')
 }
+
+export default API

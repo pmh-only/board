@@ -11,14 +11,15 @@ const handler = nextConnect()
 
 handler.use(multipartFormParser)
 
+/**
+ * S3 이미지 업로드 API입니다.
+ *
+ * FormData에서 이미지 데이터를 추출한 후 S3에 업로드합니다.
+ */
 handler.post(async (req: NextApiRequest & { files: any }, res: NextApiResponse) => {
   const { token } = req.cookies
 
-  if (!token) {
-    return res.send({ success: false })
-  }
-
-  if (!tokenVerify(token)) {
+  if (!token || !tokenVerify(token)) {
     return res.send({ success: false })
   }
 
@@ -33,14 +34,17 @@ handler.post(async (req: NextApiRequest & { files: any }, res: NextApiResponse) 
   const key = `uploads/${uuid()}-${req.files.file.originalFilename}`
 
   const uploadRequest = new PutObjectCommand({
-    Bucket: process.env.AWS_S3_BUCKET,
     Key: key,
+    Bucket: process.env.AWS_S3_BUCKET,
     Body: readFileSync(req.files.file.filepath)
   })
 
   await s3.send(uploadRequest)
 
-  return res.send({ success: true, url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${key}` })
+  return res.send({
+    success: true,
+    url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${key}`
+  })
 })
 
 export const config = { api: { bodyParser: false } }

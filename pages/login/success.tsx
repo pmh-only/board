@@ -1,7 +1,8 @@
-import { CheckCircleIcon } from '@heroicons/react/outline'
 import { NextPage } from 'next'
 import Container from '../../components/Container'
+import { CheckCircleIcon } from '@heroicons/react/outline'
 
+/** Github OAuth 로그인 성공 페이지 */
 const LoginSuccess: NextPage = () =>
   <Container className="flex flex-col items-center text-neutral-600">
     <CheckCircleIcon className="w-1/3 text-neutral-300" />

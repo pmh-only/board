@@ -8,14 +8,8 @@ import PageAnimation from '../components/PageAnimation'
 import dynamic from 'next/dynamic'
 import { PencilIcon } from '@heroicons/react/outline'
 
-import 'prismjs/themes/prism-tomorrow.css'
-import '@toast-ui/chart/dist/toastui-chart.css'
-import '@toast-ui/editor/dist/toastui-editor.css'
-import 'tui-color-picker/dist/tui-color-picker.css'
-import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css'
-import '@toast-ui/editor-plugin-table-merged-cell/dist/toastui-editor-plugin-table-merged-cell.css'
-import '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css'
 import PublishModal from '../components/PublishModal'
+import { fetchJSON } from '../utils/io'
 
 const Editor = dynamic(() => import('../components/Editor'), { ssr: false })
 
@@ -40,10 +34,10 @@ const NewPage: NextPage = () => {
     const formData = new FormData()
     formData.append('file', blob)
 
-    const data = await fetch('/api/upload', {
+    const data = await fetchJSON('/api/upload', {
       method: 'POST',
       body: formData
-    }).then((res) => res.json())
+    })
 
     callback(data.url)
   }

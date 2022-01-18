@@ -12,7 +12,8 @@ const DeletePage: NextPage = () => {
 
   async function onSubmit (e: FormEvent) {
     e.preventDefault()
-    const data = await fetch(`/api/board/${new URL(window.location.href).searchParams.get('id')}`, {
+
+    const data = await fetch(`/api/board/${router.query.id}`, {
       method: 'DELETE'
     }).then((res) => res.json())
 
@@ -29,7 +30,11 @@ const DeletePage: NextPage = () => {
           <div className="p-5 bg-white rounded-lg shadow select-none">
             <form onSubmit={onSubmit} className="flex flex-col gap-5 px-3 mt-5">
               <p>삭제하시겠습니까?</p>
-              <button type="submit" className="self-end px-3 py-2 text-white bg-red-700 hover:bg-red-800">삭제</button>
+              <button
+                type="submit"
+                className="self-end px-3 py-2 text-white bg-red-700 hover:bg-red-800">
+                  삭제
+              </button>
             </form>
           </div>
         </div>
