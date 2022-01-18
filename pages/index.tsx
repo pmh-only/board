@@ -27,18 +27,23 @@ const Home: NextPage = () => {
                   <h1 className="text-xl font-bold">{v.title}</h1>
                   <p className="overflow-hidden text-sm break-all text-neutral-500 text-ellipsis whitespace-nowrap">{v.content.replace(/<[^>]*>?/gm, '') || '본문이 없습니다'}</p>
                   <p className="flex items-center gap-3 text-xs text-neutral-500">
-                    <p><ClockIcon className="inline w-4 h-4"/> {moment(v.created_at).format('YYYY년 MM월 DD일')}</p>
-                    <p><EyeIcon className="inline w-4 h-4" /> {v.views}</p>
+                    <p data-tip="작성일"><ClockIcon className="inline w-4 h-4"/> {moment(v.created_at).format('YYYY년 MM월 DD일')}</p>
+                    <p data-tip="조회수"><EyeIcon className="inline w-4 h-4" /> {v.views}</p>
                   </p>
                   <ScrollContainer className="mt-1 overflow-x-hidden text-sm select-none text-neutral-700" style={{ wordBreak: 'keep-all' }}>
                     {v.tags.split(',')
                       .filter((tag) => tag)
                       .map((tag, i) =>
-                        <Link key={i} href={`/tags/${tag.trim()}`} passHref><span className="px-2 mr-1 transition-colors bg-blue-200 rounded-full hover:bg-blue-300">#{tag.trim()}</span></Link>
+                        <Link key={i} href={`/tags/${tag.trim()}`} passHref>
+                          <span
+                            data-tip="클릭하면 해당 테그가 있는 게시글만 표시합니다."
+                            className="px-2 mr-1 transition-colors bg-blue-200 rounded-full hover:bg-blue-300">
+                            #{tag.trim()}
+                          </span>
+                        </Link>
                       )}
                   </ScrollContainer>
                 </div>
-                <div className="absolute text-xl font-bold text-white top-1 right-2 opacity-60">.{v.id}</div>
               </motion.div>
             </Link>
           ))}
