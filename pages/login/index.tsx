@@ -1,6 +1,7 @@
 /* eslint-disable prefer-promise-reject-errors */
 import type { NextPage } from 'next'
 
+import cntl from 'cntl'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
@@ -9,8 +10,39 @@ import { LockClosedIcon, UserIcon } from '@heroicons/react/outline'
 import Container from '../../components/Container'
 import PageAnimation from '../../components/PageAnimation'
 
-import * as style from './index.style'
 import { fetchJSONBody } from '../../utils/io'
+
+const style = {
+  disabledInput: cntl`
+    px-3 py-2
+    flex items-center
+    bg-gray-200
+    
+    outline
+    outline-1
+    outline-neutral-400
+  
+    focus:outline-none
+    focus:outline-blue-400
+  `,
+  enabledInput: cntl`
+    px-3 py-2
+    flex items-center
+
+    outline
+    outline-1
+    outline-neutral-400
+    
+    focus-within:outline-blue-400
+  `,
+  submitBtn: cntl`
+    px-3 py-2
+    self-end
+    text-white bg-neutral-700
+    
+    hover:bg-neutral-800
+  `
+}
 
 /**
  * 로그인 페이지입니다.
