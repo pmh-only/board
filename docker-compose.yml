@@ -16,17 +16,15 @@ services:
   db:
     image: mariadb
     volumes:
-      - /app-data/board/my.cnf.d:/etc/mysql/conf.d:ro
-      - /app-data/board/data:/var/lib/mysql
+      - ~/docker/board/my.cnf.d:/etc/mysql/conf.d:ro
+      - ~/docker/board/data:/var/lib/mysql
       - ./database.sql:/base-structure.sql
       - ./init-database.sh:/docker-entrypoint-initdb.d/initdb.sh
     networks:
       - board
     environment:
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
       MARIADB_DATABASE: board
 
 networks:
   board:
-
-

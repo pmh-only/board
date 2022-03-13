@@ -16,8 +16,8 @@ services:
     volumes:
       - /app-data/board/my.cnf.d:/etc/mysql/conf.d:ro
       - /app-data/board/data:/var/lib/mysql
-      - ./database.sql:/base-structure.sql
-      - ./init-database.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - /app/database.sql:/base-structure.sql
+      - /app/init-database.sh:/docker-entrypoint-initdb.d/initdb.sh
     networks:
       - board
     environment:
