@@ -1,4 +1,4 @@
-create user board@172.17.0.1;
+create user board@'%';
 
 create schema board;
 
@@ -21,4 +21,4 @@ create table board.comments (
   foreign key (board_id) references board.board(id)
 );
 
-grant all on board.* to board@172.17.0.1;
+grant all on board.* to board@'%';

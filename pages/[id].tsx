@@ -73,10 +73,10 @@ const BoardView: NextPage<Props> = ({ board }) => {
       </Head>
 
       <Container className="max-w-4xl">
-        <div className="flex flex-col min-h-full gap-6 py-5">
+        <div className="flex flex-col min-h-full py-5 gap-6">
           <div className="bg-white rounded-lg shadow grow">
             {!board &&
-              <div className="flex items-center justify-center h-full gap-1 text-sm text-neutral-500">
+              <div className="flex items-center justify-center h-full text-sm gap-1 text-neutral-500">
                 <XCircleIcon className="w-5 h-5"/> 없는 페이지입니다.
               </div>}
 
@@ -86,20 +86,20 @@ const BoardView: NextPage<Props> = ({ board }) => {
                   <div className="flex items-end w-full gap-3">
                     <h1 className="flex-1 max-w-full overflow-hidden text-xl font-bold break-all text-ellipsis text-neutral-600 whitespace-nowrap">{board.title}</h1>
                     <p className="hidden py-1 text-xs sm:block text-neutral-500">{moment(board.created_at).format('YYYY년 MM월 DD일')}</p>
-                    <p className="flex items-end gap-1 py-1 text-xs text-neutral-500"><EyeIcon className="w-3 h-3"/> {board.views}</p>
+                    <p className="flex items-end py-1 text-xs gap-1 text-neutral-500"><EyeIcon className="w-3 h-3"/> {board.views}</p>
                   </div>
                   {!scrolls && (
                     <div className="flex gap-1 text-neutral-500">
                       {isAdmin &&
                         <Link passHref href={`/edit?id=${board.id}`}>
-                          <div data-tip="수정" className="p-1 transition-all rounded-lg cursor-pointer hover:bg-neutral-200">
+                          <div data-tip="수정" className="p-1 rounded-lg cursor-pointer transition-all hover:bg-neutral-200">
                             <PencilAltIcon className="w-5 h-5"/>
                           </div>
                         </Link>}
 
                       {isAdmin &&
                         <Link passHref href={`/delete?id=${board.id}`}>
-                          <div data-tip="삭제" className="p-1 transition-all rounded-lg cursor-pointer hover:bg-neutral-200">
+                          <div data-tip="삭제" className="p-1 rounded-lg cursor-pointer transition-all hover:bg-neutral-200">
                             <TrashIcon className="w-5 h-5"/>
                           </div>
                         </Link>}
@@ -133,15 +133,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const db = createDBConnection()
-  const boards = await db.select('id').from('board')
-
-  const paths = boards.map((board) => ({
-    params: { id: board.id.toString() }
-  }))
-
-  return { paths, fallback: 'blocking' }
+export const getStaticPaths: GetStaticPaths = () => {
+  return { paths: [], fallback: 'blocking' }
 }
 
 export default BoardView
