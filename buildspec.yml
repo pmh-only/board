@@ -21,6 +21,6 @@ phases:
 
 artifacts:
   files:
-    - .aws/
+    - .aws/cd_scripts/*
     - docker-compose-codedeploy.yml
     - appspec.yml
