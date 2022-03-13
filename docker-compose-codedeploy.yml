@@ -11,8 +11,6 @@ services:
       - db
     environment:
       DB_HOST: db
-    volumes:
-      - ./.env:/app/.env:ro
   db:
     image: mariadb
     volumes:
