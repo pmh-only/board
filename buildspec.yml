@@ -1,0 +1,25 @@
+version: 0.2
+  
+phases:
+  install:
+    commands:
+      - aws s3 cp s3://pmh-dev-board/uploads/settings.env .env
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login --region ap-northeast-2 --no-include-email | docker login --username AWS --password-stdin 790946953677.dkr.ecr.ap-northeast-2.amazonaws.com
+      - REPOSITORY_URI=790946953677.dkr.ecr.ap-northeast-2.amazonaws.com/devlog-deployment
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - docker push $REPOSITORY_URI:latest
+
+artifacts:
+  files:
+    - .aws/
+    - appspec.yml
