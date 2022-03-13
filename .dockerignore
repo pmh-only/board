@@ -1,2 +1,10 @@
-node_modules/*
+.aws/*
 .next/*
+assets/*
+initdb.d/*
+node_modules/*
+
+appspec.yml
+buildspec.yml
+docker-compose.yml
+

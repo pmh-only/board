@@ -1,3 +1,3 @@
 #!/bin/bash
 cd /app/board
-docker-compose -f docker-compose-codedeploy.yml up -d
+docker-compose -f .aws/docker-compose-codedeploy.yml up -d
