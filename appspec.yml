@@ -6,9 +6,11 @@ files:
 hooks:
   ApplicationStop:
     - location: /.aws/cd_scripts/stop_compose.sh
+      runas: root
   AfterInstall:
     - location: /.aws/cd_scripts/install_dependancies.sh
       runas: root
   ApplicationStart:
     - location: /.aws/cd_scripts/start_compose.sh
+      runas: root
 
