@@ -5,10 +5,10 @@ files:
     destination: /app/board
 hooks:
   ApplicationStop:
-    - location: /app/board/.aws/cd_scripts/stop_compose.sh
+    - location: /.aws/cd_scripts/stop_compose.sh
   AfterInstall:
-    - location: /api/board/.aws/cd_scripts/install_dependancies.sh
+    - location: /.aws/cd_scripts/install_dependancies.sh
       runas: root
   ApplicationStart:
-    - location: /api/board/.aws/cd_scripts/start_compose.sh
+    - location: /.aws/cd_scripts/start_compose.sh
 
