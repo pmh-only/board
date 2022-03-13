@@ -7,7 +7,7 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login --region ap-northeast-2 --no-include-email | docker login --username AWS --password-stdin 790946953677.dkr.ecr.ap-northeast-2.amazonaws.com
+      - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 790946953677.dkr.ecr.ap-northeast-2.amazonaws.com
       - REPOSITORY_URI=790946953677.dkr.ecr.ap-northeast-2.amazonaws.com/devlog-deployment
   build:
     commands:

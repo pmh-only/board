@@ -1,3 +1,3 @@
 #!/bin/bash
 cd /app/board
-docker-compose up -d
+docker-compose -f docker-compose-codedeploy.yml up -d
