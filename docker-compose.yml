@@ -16,7 +16,6 @@ services:
   db:
     image: mariadb
     volumes:
-      - ~/docker/board/my.cnf.d:/etc/mysql/conf.d:ro
       - ~/docker/board/data:/var/lib/mysql
       - ./assets:/assets
       - ./initdb.d:/docker-entrypoint-initdb.d
