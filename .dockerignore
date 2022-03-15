@@ -1,10 +1,12 @@
 .aws/*
 .next/*
-assets/*
-initdb.d/*
 node_modules/*
 
 appspec.yml
 buildspec.yml
 docker-compose.yml
+
+initdb.sh
+nginx.conf
+database.sql
 

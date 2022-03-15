@@ -21,8 +21,9 @@ phases:
 
 artifacts:
   files:
-    - assets/*
-    - initdb.d/*
     - .aws/cd_scripts/*
     - .aws/*
     - appspec.yml
+    - database.sql
+    - initdb.sh
+    - nginx.conf
