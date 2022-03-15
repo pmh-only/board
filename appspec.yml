@@ -3,7 +3,7 @@ os: linux
 file_exists_behavior: OVERWRITE
 files:
   - source: / 
-    destination: /app/board
+    destination: /app
 hooks:
   ApplicationStop:
     - location: /.aws/cd_scripts/stop_compose.sh
