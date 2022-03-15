@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - aws s3 cp s3://pmh-dev-board/uploads/settings.env .env
+      - aws s3 cp s3://pmh-dev-board/settings.env .env
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
